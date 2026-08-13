@@ -30,6 +30,8 @@ jobs:
             PR NUMBER: ${{ github.event.pull_request.number }}
             BASE: ${{ github.base_ref }}
             HEAD: ${{ github.head_ref }}
+	    claude_args: |
+      		--model claude-4-0-sonnet-20250805	
 
             Act as the independent Twinstone assurance reviewer for this pull request.
 
