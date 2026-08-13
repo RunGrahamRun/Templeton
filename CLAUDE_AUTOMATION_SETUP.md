@@ -1,3 +1,10 @@
+<!--
+NOTE: Automated Claude assurance review is not currently enabled.
+
+The GitHub Actions integration was evaluated in August 2026 but removed because the available Claude Code automation path wasn't suitable for a zero-cost automated workflow.
+
+This document is retained for future use if a suitable no-cost or locally hosted review mechanism becomes available. CLAUDE.md remains the repository-level assurance guidance.
+-->
 # Claude automation setup for Templeton
 
 ## What this adds
