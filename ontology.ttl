@@ -1,0 +1,225 @@
+# Twinstone controlled-baseline ontology — includes Global Fishing Watch AIS-derived maritime activity as an explicit Twinstone observation extension while keeping live vessel position semantics separate.
+# Semantic base: IES4 plus a deliberately small Twinstone extension.
+# Mapping decisions are tracked in core/ies-mapping.json; constraints are in core/twinstone-shapes.ttl.
+# Vendor-specific Telicent Graph/Search styles are kept in core/ontology-styles.ttl.
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix ies: <http://ies.data.gov.uk/ontology/ies4#> .
+@prefix tw: <https://twinstone.local/ontology#> .
+
+# CORE migration principle:
+# reuse IES4 classes where the mapping is confirmed; extend IES4 only where
+# Twinstone needs source/assurance-specific concepts. Observation-like records
+# are explicitly modelled as IES4 Events in this compatibility phase.
+
+tw:ObservationEvent rdf:type rdfs:Class ;
+  rdfs:subClassOf ies:Event ;
+  rdfs:label "Twinstone observation event" ;
+  rdfs:comment "Base class for Twinstone source observations and deterministic derived evidence records. It extends IES4 Event for the CORE compatibility path." .
+
+# Entity classes retained pending a class-by-class IES4 mapping review.
+# Do not infer an IES4 superclass merely from the label.
+tw:Aircraft rdf:type rdfs:Class ;
+  rdfs:label "Aircraft" ;
+  rdfs:comment "Twinstone aircraft entity placeholder. Exact IES4 superclass mapping remains a controlled migration decision." .
+
+tw:Satellite rdf:type rdfs:Class ;
+  rdfs:label "Satellite" ;
+  rdfs:comment "Twinstone satellite entity placeholder. Exact IES4 superclass mapping remains a controlled migration decision." .
+
+tw:AircraftPositionObservation rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Aircraft position observation" .
+
+tw:VesselPositionObservation rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Vessel position observation" ;
+  rdfs:comment "A maritime position observation. Where the source supports a vessel identity, the entity should use the confirmed IES4 class ies:Ship." .
+
+tw:MaritimeActivityObservation rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Maritime activity observation" ;
+  rdfs:comment "An AIS-derived activity event supplied by Global Fishing Watch, such as apparent fishing, encounter, loitering, port visit or AIS gap. The observed entity reuses ies:Ship where a vessel identity is supplied. This is not live vessel-position telemetry. Source event classifications and caveats must be preserved; Twinstone does not infer confirmed fishing, transshipment, deliberate AIS disabling, cause, intent or wrongdoing from the record alone." .
+
+tw:SatellitePositionEstimate rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Satellite position estimate" ;
+  rdfs:comment "A position propagated from source orbital elements; not a direct sensor observation." .
+
+tw:EarthObservationProduct rdf:type rdfs:Class ;
+  rdfs:label "Earth observation product" .
+
+tw:EarthObservationAcquisition rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Earth observation acquisition catalogue record" ;
+  rdfs:comment "STAC catalogue metadata describing an EO acquisition/product. Catalogue presence does not constitute interpretation of imagery pixels." .
+
+tw:WeatherObservationEvent rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Weather observation event" .
+
+tw:EarthquakeEvent rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Earthquake event" .
+
+# A rendered raster is a view/derivation of EO source pixels for human inspection,
+# not a new ground-truth event.
+tw:EarthObservationRasterRender rdf:type rdfs:Class ;
+  rdfs:label "Earth observation raster render" .
+
+tw:EarthObservationChangeDetection rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Earth observation change detection" ;
+  rdfs:comment "A deterministic derived indicator that sensor values changed between two paired EO acquisitions after a valid-pixel common-coverage gate. Invalid or insufficiently covered pairs do not create change observations. It does not establish cause, object identity, damage, actor, intent or attribution." .
+
+tw:EarthObservationChangeRegion rdf:type rdfs:Class ;
+  rdfs:label "Earth observation change region" ;
+  rdfs:comment "A spatial region identified by a deterministic EO change-screening method." .
+
+tw:ThermalAnomalyObservation rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Thermal anomaly observation" ;
+  rdfs:comment "A NASA FIRMS active-fire / thermal-anomaly observation or deterministic cluster summary. It does not establish cause, attack, explosion, damage, actor, intent or attribution." .
+
+tw:ThermalAnomalyCluster rdf:type rdfs:Class ;
+  rdfs:label "Thermal anomaly cluster" ;
+  rdfs:comment "A deterministic spatial-temporal grouping of FIRMS hotspot pixels. Cluster membership is a Twinstone derivation, not a NASA event classification." .
+
+tw:CrossSourceAssociation rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Cross-source association" ;
+  rdfs:comment "A deterministic spatial and temporal proximity relationship between supplied observations. Association is not causation and does not establish a common cause or attribution." .
+
+tw:ReportedConflictEvent rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Reported conflict event" ;
+  rdfs:comment "A versioned UCDP coded report of an organized-violence event. It is reported-event evidence, not a physical sensor observation. Date and geographic precision must be preserved and it does not prove the cause of co-located thermal or EO changes." .
+
+tw:MultiSourceEvidenceChain rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Multi-source evidence chain" ;
+  rdfs:comment "A deterministic closed chain linking a reported UCDP event, FIRMS thermal cluster and EO-change region after each pair passes explicit spatial/temporal rules. A chain is corroborative proximity evidence, not causation or attribution." .
+
+tw:CorroborationArea rdf:type rdfs:Class ;
+  rdfs:label "Corroboration analysis area" ;
+  rdfs:comment "A coarse spatial analysis cell used to group evidence for deterministic corroboration scoring. It is not a target, threat, military-significance or future-activity classification." .
+
+tw:CorroborationAreaObservation rdf:type rdfs:Class ;
+  rdfs:subClassOf tw:ObservationEvent ;
+  rdfs:label "Corroboration area observation" ;
+  rdfs:comment "A browser-derived deterministic score over a coarse analysis cell and selected time window. It supports analyst attention only and does not establish cause, intent, attribution, targeting priority or future activity." .
+
+
+# Stable-identity boundary for CORE knowledge export. Runtime URNs are retained as
+# trace literals only; exported knowledge resources use https://twinstone.local/id/.
+tw:identityKey rdf:type rdfs:Property ;
+  rdfs:label "identity key" ;
+  rdfs:comment "Canonical deterministic key used by Twinstone to derive a stable knowledge URI." .
+
+tw:identityScheme rdf:type rdfs:Property ;
+  rdfs:label "identity scheme" ;
+  rdfs:comment "Versioned deterministic identity algorithm used to mint the exported knowledge URI." .
+
+tw:runtimeId rdf:type rdfs:Property ;
+  rdfs:label "runtime identifier" ;
+  rdfs:comment "Transient/source-runtime identifier retained for traceability; it is not the stable knowledge identity." .
+
+# Compatibility/export properties. These provide a stable RDF boundary now;
+# the later CORE mapper can replace generic literals with richer IES4 structures
+# (for example explicit states/locations) without changing source ingestion.
+tw:observedEntity rdf:type rdfs:Property ; rdfs:label "observed entity" .
+tw:observedAt rdf:type rdfs:Property ; rdfs:label "observed at" .
+tw:ingestedAt rdf:type rdfs:Property ; rdfs:label "ingested at" .
+tw:latitude rdf:type rdfs:Property ; rdfs:label "latitude" .
+tw:longitude rdf:type rdfs:Property ; rdfs:label "longitude" .
+tw:sourceName rdf:type rdfs:Property ; rdfs:label "source name" .
+tw:sourceRecordId rdf:type rdfs:Property ; rdfs:label "source record identifier" .
+tw:acquisitionTransport rdf:type rdfs:Property ;
+  rdfs:label "acquisition transport" ;
+  rdfs:comment "How Twinstone acquired a source record, for example browser-https or worker-https." .
+tw:processingMethod rdf:type rdfs:Property ; rdfs:label "processing method" .
+tw:interpretationBoundary rdf:type rdfs:Property ;
+  rdfs:label "interpretation boundary" ;
+  rdfs:comment "Human-readable epistemic constraint carried with an observation or derivation." .
+tw:sourceAttributesJson rdf:type rdfs:Property ;
+  rdfs:label "source attributes JSON" ;
+  rdfs:comment "Lossless compatibility literal for source-specific attributes pending richer IES4 mapping." .
+tw:derivedAttributesJson rdf:type rdfs:Property ;
+  rdfs:label "derived attributes JSON" ;
+  rdfs:comment "Lossless compatibility literal for deterministic Twinstone-derived attributes pending richer IES4 mapping." .
+tw:sourceDataEpoch rdf:type rdfs:Property ;
+  rdfs:label "source data epoch" ;
+  rdfs:comment "Epoch of the source data used for a derived estimate." .
+
+
+# v1.9.0 analyst-defined bounded investigation context.
+tw:InvestigationArea a rdfs:Class ;
+  rdfs:label "Investigation area" ;
+  rdfs:comment "A user-selected bounded area of interest used to scope source acquisition and deterministic analysis. It is an analytical context, not evidence that the area is operationally significant." .
+
+tw:analysisRadiusKm a rdfs:Property ; rdfs:label "analysis radius km" .
+tw:analysisWindowHours a rdfs:Property ; rdfs:label "analysis window hours" .
+
+
+# v1.9.1 note: Timeline/replay is a presentation/query-time view over retained observations.
+# It intentionally does not create a new evidence class or rewrite observation timestamps.
+
+
+# v1.9.2 analyst work-product semantics.
+tw:InvestigationNotebook a rdfs:Class ;
+  rdfs:label "Investigation notebook" ;
+  rdfs:comment "An analyst-authored work product attached to a Twinstone investigation. Notes and assessments are not source observations and do not become corroborating evidence by being stored here." .
+
+tw:EvidenceReference a rdfs:Class ;
+  rdfs:label "Evidence reference" ;
+  rdfs:comment "A reference from an analyst work product to a stable Twinstone knowledge identity. The reference does not duplicate or modify the referenced evidence." .
+
+tw:analystNotes a rdfs:Property ; rdfs:label "analyst notes" .
+tw:analystAssessment a rdfs:Property ; rdfs:label "analyst assessment" .
+tw:unknownsAndGaps a rdfs:Property ; rdfs:label "unknowns and gaps" .
+tw:referencesEvidence a rdfs:Property ; rdfs:label "references evidence" .
+
+
+# v1.9.4 retains the v1.9.3 deterministic analytical products.
+tw:InvestigationEvidenceAssessment a rdfs:Class ;
+  rdfs:label "Investigation evidence assessment" ;
+  rdfs:comment "A transparent deterministic assessment of corroborative evidence quality within an investigation. Its score is an analyst-attention aid, not a probability, threat score, target ranking, prediction, causation or attribution." .
+
+tw:WindowComparison a rdfs:Class ;
+  rdfs:label "Evidence window comparison" ;
+  rdfs:comment "A deterministic comparison of retained/searchable evidence between adjacent analysis windows. Source lookback limits must be preserved; missing historical coverage is not evidence of zero activity." .
+
+tw:evidenceScore a rdfs:Property ; rdfs:label "evidence score" .
+tw:coverageComplete a rdfs:Property ; rdfs:label "coverage complete" .
+
+
+# v1.10.2 retains the v1.10 non-map investigation context semantics.
+tw:InvestigationContextRecord a rdfs:Class ;
+  rdfs:label "Investigation context record" ;
+  rdfs:comment "A contextual record supplied to support analyst understanding. Context records are not automatically map observations or corroborating evidence and do not increase Twinstone evidence scores by default." .
+
+tw:InternetOutageContext a rdfs:Class ;
+  rdfs:subClassOf tw:InvestigationContextRecord ;
+  rdfs:label "Internet outage context" ;
+  rdfs:comment "IODA connectivity/outage context. It does not establish the cause of a connectivity change or prove a physical incident." .
+
+tw:SpaceWeatherContext a rdfs:Class ;
+  rdfs:subClassOf tw:InvestigationContextRecord ;
+  rdfs:label "Space weather context" ;
+  rdfs:comment "Global NOAA SWPC space-environment context. Temporal coincidence with a local system anomaly does not establish causation." .
+
+tw:HumanitarianReportContext a rdfs:Class ;
+  rdfs:subClassOf tw:InvestigationContextRecord ;
+  rdfs:label "Humanitarian report context" ;
+  rdfs:comment "Curated humanitarian reported information such as ReliefWeb reports; not a physical sensor observation." .
+
+tw:PublicHealthReportContext a rdfs:Class ;
+  rdfs:subClassOf tw:InvestigationContextRecord ;
+  rdfs:label "Public health report context" ;
+  rdfs:comment "Public-health reported information such as WHO Disease Outbreak News; not a local physical sensor observation." .
+
+tw:contextScope a rdfs:Property ; rdfs:label "context scope" .
+tw:contributesToCorroborationScore a rdfs:Property ; rdfs:label "contributes to corroboration score" .

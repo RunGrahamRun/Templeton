@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Twinstone candidate Telicent CORE envelope",
+  "type": "object",
+  "required": [
+    "targetTopic",
+    "readyForPublish",
+    "headers",
+    "key",
+    "data",
+    "metadata"
+  ],
+  "properties": {
+    "targetTopic": {
+      "const": "knowledge"
+    },
+    "readyForPublish": {
+      "type": "boolean"
+    },
+    "headers": {
+      "type": "object",
+      "required": [
+        "Request-Id",
+        "Exec-Path",
+        "Content-Type",
+        "Data-Source",
+        "Data-Producer",
+        "Security-Label",
+        "policyInformation"
+      ]
+    },
+    "key": {
+      "type": "string"
+    },
+    "data": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "twinstoneVersion",
+        "profile",
+        "observationCount",
+        "generatedAt",
+        "coreCompatibilityPhase",
+        "identityPolicy",
+        "shaclContract"
+      ]
+    }
+  }
+}

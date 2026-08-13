@@ -1,0 +1,89 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix tw: <https://twinstone.local/ontology#> .
+
+# Twinstone controlled-baseline SHACL contract. These are minimum export-boundary constraints,
+# not a complete IES4 conformance model. A later telicent-ies-tool mapper will
+# add richer IES state/location patterns before CORE publication.
+
+tw:ObservationEventShape a sh:NodeShape ;
+  sh:targetClass tw:ObservationEvent,
+                 tw:AircraftPositionObservation,
+                 tw:VesselPositionObservation,
+                 tw:MaritimeActivityObservation,
+                 tw:SatellitePositionEstimate,
+                 tw:EarthObservationAcquisition,
+                 tw:WeatherObservationEvent,
+                 tw:EarthquakeEvent,
+                 tw:EarthObservationChangeDetection,
+                 tw:ThermalAnomalyObservation,
+                 tw:CrossSourceAssociation,
+                 tw:ReportedConflictEvent,
+                 tw:MultiSourceEvidenceChain,
+                 tw:CorroborationAreaObservation ;
+  sh:property [ sh:path tw:identityKey ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path tw:identityScheme ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue "deterministic-v1" ] ;
+  sh:property [ sh:path tw:observedAt ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+  sh:property [ sh:path tw:observedEntity ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path tw:sourceName ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path tw:sourceRecordId ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+tw:SatellitePositionEstimateShape a sh:NodeShape ;
+  sh:targetClass tw:SatellitePositionEstimate ;
+  sh:property [ sh:path tw:sourceDataEpoch ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] .
+
+tw:MaritimeActivityObservationShape a sh:NodeShape ;
+  sh:targetClass tw:MaritimeActivityObservation ;
+  sh:property [ sh:path tw:interpretationBoundary ; sh:minCount 1 ] .
+
+tw:ThermalAnomalyObservationShape a sh:NodeShape ;
+  sh:targetClass tw:ThermalAnomalyObservation ;
+  sh:property [ sh:path tw:interpretationBoundary ; sh:minCount 1 ] .
+
+tw:EarthObservationChangeDetectionShape a sh:NodeShape ;
+  sh:targetClass tw:EarthObservationChangeDetection ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 2 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path tw:interpretationBoundary ; sh:minCount 1 ] .
+
+tw:CrossSourceAssociationShape a sh:NodeShape ;
+  sh:targetClass tw:CrossSourceAssociation ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 2 ; sh:nodeKind sh:IRI ] .
+
+tw:MultiSourceEvidenceChainShape a sh:NodeShape ;
+  sh:targetClass tw:MultiSourceEvidenceChain ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 3 ; sh:nodeKind sh:IRI ] .
+
+tw:CorroborationAreaObservationShape a sh:NodeShape ;
+  sh:targetClass tw:CorroborationAreaObservation ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:nodeKind sh:IRI ] .
+
+
+# v1.9.0: optional exported investigation context must carry bounded scope.
+tw:InvestigationAreaShape a sh:NodeShape ;
+  sh:targetClass tw:InvestigationArea ;
+  sh:property [ sh:path tw:analysisRadiusKm ; sh:minCount 1 ; sh:datatype xsd:decimal ] ;
+  sh:property [ sh:path tw:analysisWindowHours ; sh:minCount 1 ; sh:datatype xsd:integer ] .
+
+
+# v1.9.2 notebook work product: if exported, evidence references must be IRIs.
+tw:InvestigationNotebookShape a sh:NodeShape ;
+  sh:targetClass tw:InvestigationNotebook ;
+  sh:property [ sh:path tw:referencesEvidence ; sh:nodeKind sh:IRI ] .
+
+
+# v1.9.4 retains the v1.9.3 analytical products.
+tw:InvestigationEvidenceAssessmentShape a sh:NodeShape ;
+  sh:targetClass tw:InvestigationEvidenceAssessment ;
+  sh:property [ sh:path tw:evidenceScore ; sh:minCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 100 ] .
+
+tw:WindowComparisonShape a sh:NodeShape ;
+  sh:targetClass tw:WindowComparison ;
+  sh:property [ sh:path tw:coverageComplete ; sh:minCount 1 ; sh:datatype xsd:boolean ] .
+
+
+# Context records must explicitly state that they do not contribute to corroboration by default.
+tw:InvestigationContextRecordShape a sh:NodeShape ;
+  sh:targetClass tw:InvestigationContextRecord, tw:InternetOutageContext, tw:SpaceWeatherContext, tw:HumanitarianReportContext, tw:PublicHealthReportContext ;
+  sh:property [ sh:path tw:contributesToCorroborationScore ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue false ] .

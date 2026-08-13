@@ -1,0 +1,17 @@
+node_modules/
+.wrangler/
+*.log
+.DS_Store
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+wrangler.toml.local
+*.pem
+*.key
+npm-debug.log*
+coverage/
+
+# Local pipeline transcripts
+npm-ci-output.txt
+test-output.txt

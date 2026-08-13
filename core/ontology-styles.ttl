@@ -1,0 +1,11 @@
+@prefix tw: <https://twinstone.local/ontology#> .
+@prefix ies: <http://ies.data.gov.uk/ontology/ies4#> .
+@prefix tont: <http://telicent.io/ontology/> .
+
+# Candidate Telicent application styles using the documented tont:style JSON shape.
+# These are presentation-only and do not alter the semantic ontology.
+tw:Aircraft tont:style "{\"defaultStyles\":{\"dark\":{\"backgroundColor\":\"#16352a\",\"color\":\"#48d597\"},\"light\":{\"backgroundColor\":\"#dff8ec\",\"color\":\"#16724c\"},\"shape\":\"circle\",\"borderRadius\":\"9999px\",\"borderWidth\":\"2px\",\"selectedBorderWidth\":\"3px\"},\"defaultIcons\":{\"riIcon\":\"ri-plane-line\",\"faIcon\":\"fa-solid fa-plane\",\"faUnicode\":\"\\uf072\",\"faClass\":\"fa-solid\"}}" .
+ies:Ship tont:style "{\"defaultStyles\":{\"dark\":{\"backgroundColor\":\"#102c3d\",\"color\":\"#38bdf8\"},\"light\":{\"backgroundColor\":\"#e0f4fd\",\"color\":\"#03658d\"},\"shape\":\"circle\",\"borderRadius\":\"9999px\",\"borderWidth\":\"2px\",\"selectedBorderWidth\":\"3px\"},\"defaultIcons\":{\"riIcon\":\"ri-ship-line\",\"faIcon\":\"fa-solid fa-ship\",\"faUnicode\":\"\\uf21a\",\"faClass\":\"fa-solid\"}}" .
+tw:Satellite tont:style "{\"defaultStyles\":{\"dark\":{\"backgroundColor\":\"#2d2147\",\"color\":\"#9f7aea\"},\"light\":{\"backgroundColor\":\"#eee8fb\",\"color\":\"#5d3ca6\"},\"shape\":\"circle\",\"borderRadius\":\"9999px\",\"borderWidth\":\"2px\",\"selectedBorderWidth\":\"3px\"},\"defaultIcons\":{\"riIcon\":\"ri-satellite-line\",\"faIcon\":\"fa-solid fa-satellite\",\"faUnicode\":\"\\uf7bf\",\"faClass\":\"fa-solid\"}}" .
+
+tw:MaritimeActivityObservation tont:style "{\"defaultStyles\":{\"dark\":{\"backgroundColor\":\"#102c3d\",\"color\":\"#60a5fa\"},\"light\":{\"backgroundColor\":\"#e8f2ff\",\"color\":\"#245aa8\"},\"shape\":\"circle\",\"borderRadius\":\"4px\",\"borderWidth\":\"2px\",\"selectedBorderWidth\":\"3px\"},\"defaultIcons\":{\"riIcon\":\"ri-anchor-line\",\"faIcon\":\"fa-solid fa-water\",\"faUnicode\":\"\uf773\",\"faClass\":\"fa-solid\"}}" .

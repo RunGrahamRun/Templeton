@@ -1,0 +1,215 @@
+{
+  "twinstoneVersion": "1.0.0",
+  "purpose": "Controlled mapping register for the Twinstone normalised observation model to IES4 + Twinstone extensions. 'confirmed' means the superclass/reuse decision is intentionally asserted; 'pending' means no IES superclass is guessed.",
+  "iesNamespace": "http://ies.data.gov.uk/ontology/ies4#",
+  "twNamespace": "https://twinstone.local/ontology#",
+  "identityNamespace": "https://twinstone.local/id/",
+  "identityPolicy": "deterministic-v1",
+  "rules": [
+    {
+      "domain": "base-observation",
+      "runtimeClass": "tw:ObservationEvent",
+      "mappingStatus": "compatibility",
+      "iesPattern": "tw:ObservationEvent rdfs:subClassOf ies:Event",
+      "identity": "observation URI from source-domain stable key; runtime URN retained as tw:runtimeId",
+      "required": [
+        "tw:identityKey",
+        "tw:identityScheme",
+        "tw:observedAt",
+        "tw:observedEntity",
+        "tw:sourceName",
+        "tw:sourceRecordId"
+      ],
+      "notes": "tw:ObservationEvent remains an IES Event compatibility class in the browser exporter. v1.9 must test whether each source domain maps more correctly to an IES State, Event, documentation/evidence pattern, or a combination."
+    },
+    {
+      "domain": "aircraft",
+      "runtimeClass": "tw:AircraftPositionObservation",
+      "entityClass": "tw:Aircraft",
+      "mappingStatus": "partial",
+      "iesPattern": "observation is an ies:Event through tw:ObservationEvent; aircraft entity superclass remains pending",
+      "entityIdentity": "icao24",
+      "observationIdentity": "icao24 + observedAt",
+      "notes": "Do not guess an IES aircraft superclass until checked against the deployed/current IES common ontology.",
+      "targetWorldModel": "persistent entity + time-bounded IES State/Location pattern; source observation retained as provenance/evidence record"
+    },
+    {
+      "domain": "vessels",
+      "runtimeClass": "tw:VesselPositionObservation",
+      "entityClass": "ies:Ship",
+      "mappingStatus": "confirmed",
+      "iesPattern": "entity reuses ies:Ship; observation remains a Twinstone event extension",
+      "entityIdentity": "MMSI where present",
+      "observationIdentity": "MMSI + observedAt",
+      "targetWorldModel": "persistent entity + time-bounded IES State/Location pattern; source observation retained as provenance/evidence record"
+    },
+    {
+      "domain": "maritimeActivity",
+      "runtimeClass": "tw:MaritimeActivityObservation",
+      "entityClass": "ies:Ship",
+      "mappingStatus": "confirmed",
+      "iesPattern": "persistent vessel entity reuses ies:Ship; GFW event remains a Twinstone observation/event extension with source semantics and provenance",
+      "entityIdentity": "GFW vessel id where present, otherwise MMSI/ssvid",
+      "observationIdentity": "Global Fishing Watch event id",
+      "required": [
+        "tw:interpretationBoundary"
+      ],
+      "notes": "AIS-derived activity history, not live vessel-position telemetry. Apparent fishing, encounter, loitering, port visit and AIS-gap classifications retain GFW semantics/caveats and do not independently establish confirmed fishing, transshipment, deliberate disabling, intent or wrongdoing.",
+      "targetWorldModel": "persistent ies:Ship entity + source activity event with explicit temporal/location/provenance; later CORE mapper may refine activity state/event relationships"
+    },
+    {
+      "domain": "satellites",
+      "runtimeClass": "tw:SatellitePositionEstimate",
+      "entityClass": "tw:Satellite",
+      "mappingStatus": "partial",
+      "iesPattern": "estimate is an ies:Event through tw:ObservationEvent; satellite entity superclass remains pending",
+      "entityIdentity": "NORAD catalogue ID",
+      "observationIdentity": "NORAD + propagated observedAt",
+      "required": [
+        "tw:sourceDataEpoch"
+      ],
+      "notes": "Position is a derived SGP4 estimate; source element epoch must remain explicit.",
+      "targetWorldModel": "persistent entity + time-bounded IES State/Location pattern; source observation retained as provenance/evidence record"
+    },
+    {
+      "domain": "earthObservation",
+      "runtimeClass": "tw:EarthObservationAcquisition",
+      "entityClass": "tw:EarthObservationProduct",
+      "mappingStatus": "extension",
+      "identity": "Copernicus STAC product ID",
+      "notes": "Catalogue record is metadata; imagery pixels are not automatically interpreted."
+    },
+    {
+      "domain": "earthquakes",
+      "runtimeClass": "tw:EarthquakeEvent",
+      "mappingStatus": "extension",
+      "identity": "USGS event ID"
+    },
+    {
+      "domain": "thermal",
+      "runtimeClass": "tw:ThermalAnomalyObservation",
+      "entityClass": "tw:ThermalAnomalyCluster",
+      "mappingStatus": "extension",
+      "identity": "deterministic hash of FIRMS cluster sourceRecordId",
+      "required": [
+        "tw:interpretationBoundary"
+      ],
+      "notes": "Thermal anomaly/cluster is not cause, strike, explosion, damage or attribution."
+    },
+    {
+      "domain": "reportedConflict",
+      "runtimeClass": "tw:ReportedConflictEvent",
+      "mappingStatus": "extension",
+      "identity": "UCDP event ID",
+      "notes": "Reported/coded event evidence; date/geographic precision remains source metadata."
+    },
+    {
+      "domain": "earthObservationChange",
+      "runtimeClass": "tw:EarthObservationChangeDetection",
+      "entityClass": "tw:EarthObservationChangeRegion",
+      "mappingStatus": "extension",
+      "identity": "deterministic hash of previous/current acquisitions + region",
+      "required": [
+        "prov:wasDerivedFrom >= 2",
+        "tw:interpretationBoundary"
+      ],
+      "notes": "Only emitted after common valid-pixel gate passes."
+    },
+    {
+      "domain": "crossSourceAssociation",
+      "runtimeClass": "tw:CrossSourceAssociation",
+      "mappingStatus": "extension",
+      "identity": "deterministic hash of association family + evidence IDs",
+      "required": [
+        "prov:wasDerivedFrom >= 2"
+      ],
+      "notes": "Association is not causation."
+    },
+    {
+      "domain": "evidenceChain",
+      "runtimeClass": "tw:MultiSourceEvidenceChain",
+      "mappingStatus": "extension",
+      "identity": "deterministic hash of UCDP + FIRMS + EO-change evidence IDs",
+      "required": [
+        "prov:wasDerivedFrom >= 3"
+      ]
+    },
+    {
+      "domain": "corroborationArea",
+      "runtimeClass": "tw:CorroborationAreaObservation",
+      "entityClass": "tw:CorroborationArea",
+      "mappingStatus": "extension",
+      "identity": "deterministic hash of profile + time window + spatial cell",
+      "notes": "Analyst-attention/evidence-quality aid; not a target or threat ranking."
+    }
+  ],
+  "registerVersion": "1.0",
+  "namespaceStatus": "PoC namespace only; replace with an organisation-controlled resolvable namespace before production CORE publication.",
+  "semanticBoundary": "The current normalized observation envelope is not assumed to be the final IES world model. The v1.9 mapper should split persistent entities, IES States/Events/Periods/Locations and source evidence/provenance where appropriate.",
+  "mappings": [
+    {
+      "twinstoneClass": "tw:InvestigationArea",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "Analyst-defined AOI is a Twinstone analytical context rather than a source-world entity/event. Do not coerce it into an IES event merely for convenience.",
+      "identity": "session investigation id; export remains optional until notebook/case semantics are formalised."
+    },
+    {
+      "twinstoneClass": "tw:InvestigationNotebook",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "Analyst-authored work product is kept separate from source-world observations. Future CORE deployment must apply appropriate authorship/provenance and security policy."
+    },
+    {
+      "twinstoneClass": "tw:EvidenceReference",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "Reference edge to an existing stable knowledge identity; not a duplicate observation or corroboration source."
+    },
+    {
+      "twinstoneClass": "tw:InvestigationEvidenceAssessment",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "Deterministic analytical product over supplied evidence; must not be modelled as a source-world event or threat classification."
+    },
+    {
+      "twinstoneClass": "tw:WindowComparison",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "Deterministic analytical comparison with explicit source-coverage metadata; absence caused by insufficient lookback must remain distinguishable from zero observations."
+    },
+    {
+      "twinstoneClass": "tw:InvestigationContextRecord",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "Context is kept outside the source-world observation/corroboration model until a domain-specific mapping is justified. Context does not increase corroboration scores by default."
+    },
+    {
+      "twinstoneClass": "tw:InternetOutageContext",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "IODA connectivity events remain contextual evidence about network reachability; no causal or physical-event mapping is asserted."
+    },
+    {
+      "twinstoneClass": "tw:SpaceWeatherContext",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "NOAA SWPC measurements/alerts are global environmental context in this PoC; do not infer local causal relationships automatically."
+    },
+    {
+      "twinstoneClass": "tw:HumanitarianReportContext",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "ReliefWeb records are reported-information/context resources; source authorship/provenance must remain explicit."
+    },
+    {
+      "twinstoneClass": "tw:PublicHealthReportContext",
+      "status": "extension",
+      "iesMapping": null,
+      "decision": "WHO Disease Outbreak News records are public-health reporting/context resources, not local sensor observations."
+    }
+  ],
+  "presentationViews": {
+    "timelineReplay": "query-time/session view only; not asserted as source knowledge"
+  }
+}

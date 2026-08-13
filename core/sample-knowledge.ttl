@@ -1,0 +1,16 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix tw: <https://twinstone.local/ontology#> .
+
+<https://twinstone.local/id/satellite/norad/25544> a tw:Satellite ;
+  tw:identityScheme "deterministic-v1" .
+
+<https://twinstone.local/id/observation/satellitepositionestimate/2d81b144b0924d6a> a tw:SatellitePositionEstimate ;
+  tw:identityKey "satellites|celestrak|25544|2026-08-12T05:00:00.000Z" ;
+  tw:identityScheme "deterministic-v1" ;
+  tw:runtimeId "urn:twinstone:estimate:celestrak:25544:2026-08-12T05:00:00.000Z" ;
+  tw:observedAt "2026-08-12T05:00:00+00:00"^^xsd:dateTime ;
+  tw:observedEntity <https://twinstone.local/id/satellite/norad/25544> ;
+  tw:sourceName "CelesTrak" ;
+  tw:sourceRecordId "25544" ;
+  tw:sourceDataEpoch "2026-08-11T12:00:00+00:00"^^xsd:dateTime .

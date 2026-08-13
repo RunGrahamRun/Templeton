@@ -1,0 +1,27 @@
+{
+  "total": 2,
+  "entries": [
+    {
+      "id": "gfw-encounter-0001",
+      "type": "encounter",
+      "start": "2026-08-10T02:15:00Z",
+      "end": "2026-08-10T03:40:00Z",
+      "position": { "lat": 50.9, "lon": 30.5 },
+      "vessel": { "id": "gfw-vessel-aaa", "ssvid": "273312000", "name": "TEST VESSEL ONE", "type": "fishing", "flag": "RUS" },
+      "encounter": {
+        "vessel": { "id": "gfw-vessel-bbb", "ssvid": "273312111", "name": "TEST VESSEL TWO", "flag": "RUS", "type": "carrier" },
+        "potentialRisk": "unknown"
+      },
+      "regions": { "eez": ["RUS"] }
+    },
+    {
+      "id": "gfw-fishing-0002",
+      "type": "fishing",
+      "start": "2026-08-11T09:00:00Z",
+      "end": "2026-08-11T11:30:00Z",
+      "position": { "lat": 50.95, "lon": 30.55 },
+      "vessel": { "id": "gfw-vessel-ccc", "ssvid": "273312222", "name": "TEST VESSEL THREE", "type": "fishing", "flag": "RUS" },
+      "fishing": { "potentialRisk": "unknown" }
+    }
+  ]
+}

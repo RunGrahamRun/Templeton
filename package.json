@@ -1,0 +1,22 @@
+{
+  "name": "templeton",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Twinstone application (browser UI + Cloudflare Worker) with an automated pipeline-check test suite.",
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "test:verbose": "node scripts/run-tests.mjs --verbose",
+    "check": "npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@zazuko/env-node": "^2.1.2",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "jsdom": "^25.0.1",
+    "rdf-validate-shacl": "^0.5.4"
+  }
+}
