@@ -30,8 +30,7 @@ jobs:
             PR NUMBER: ${{ github.event.pull_request.number }}
             BASE: ${{ github.base_ref }}
             HEAD: ${{ github.head_ref }}
-	    claude_args: |
-      		--model claude-4-0-sonnet-20250805	
+
 
             Act as the independent Twinstone assurance reviewer for this pull request.
 
@@ -71,4 +70,5 @@ jobs:
             Post a concise top-level PR summary, including the npm test result, and use inline comments for specific code findings where useful.
 
           claude_args: |
-            --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),mcp__github_inline_comment__create_inline_comment"
+            --model sonnet
+	    --allowedTools "Read,Glob,Grep,Bash(npm:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),mcp__github_inline_comment__create_inline_comment"
